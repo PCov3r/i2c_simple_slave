@@ -14,11 +14,23 @@ void setup() {
   }
 
   Serial.println("Sensor successfully initialized.");
+  status = sensor.setAccumulatedRain(0.5);
+  if(!status) {
+    Serial.println("Could not write value.");
+    while (1);
+  }
+  delay(500);
 }
 
 void loop() {
-  float value = sensor.read();
-  Serial.print("Got value: ");
-  Serial.print(value);
-  delay(1000);
+  float value = sensor.getInstantRain();
+  Serial.print("Got instant value: "); 
+  Serial.println(value);
+  bool status = sensor.requestAverageRain(1);
+  Serial.print("Got status: ");
+  Serial.println(status);
+  float avg = sensor.getAverageRainResult();
+  Serial.print("Got average value: "); 
+  Serial.println(avg);
+  delay(5000);
 }
