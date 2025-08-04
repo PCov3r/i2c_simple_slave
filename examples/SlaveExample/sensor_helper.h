@@ -13,7 +13,7 @@
 // Default register values
 #define rain_tips 0.28f
 #define wind_zero 0.0f
-#define wind_slope 1.0
+#define wind_slope 1.0f
 #define avg_delay 15
 
 #define ROLL_WINDOW  30

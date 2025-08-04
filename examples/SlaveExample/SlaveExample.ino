@@ -30,7 +30,6 @@ void loop() {
   handleRain();
   handleRainHourly();
   // printRegisterContent();
-  delay(100);
 }
 
 // set rain flag, on interrupt

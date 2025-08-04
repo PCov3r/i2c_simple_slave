@@ -1,7 +1,7 @@
 #include "sensor_helper.h"
 
-const unsigned long HOUR = 10000;//3600000UL;
-const unsigned long MINUTE = 10000;//60000UL;
+const unsigned long HOUR = 3600000UL;
+const unsigned long MINUTE = 60000UL;
 
 unsigned long last_wind_update = 0;
 int roll_arr[ROLL_WINDOW] = {0};
@@ -31,7 +31,9 @@ void handleControlRequests() {
   // Wind Dir
   if (getControl(CTRL_SHIFT_DIR) == REQUEST) {
     analog_val = analogRead(VANE_PIN);
-    regbuff[WIND_DIR].asFloat = directions[analog_val / 8];
+    double degrees = (analog_val / 1023.0) * 360.0;
+    int index = static_cast<int>((degrees + 22.5)) % 360 / 45;
+    regbuff[WIND_DIR].asFloat = directions[index];
     setStatus(STAT_SHIFT_DIR, READY);
     regbuff[CONTROL_REG].asBinary &= ~(0b11 << CTRL_SHIFT_DIR);
   }
@@ -49,7 +51,9 @@ void handleControlRequests() {
     analog_val = analogRead(ANEMOMETER_PIN);
     regbuff[WIND_INSTANT].asFloat = analog_val * regbuff[WIND_COEFF].asFloat + regbuff[WIND_ZERO].asFloat;
     analog_val = analogRead(VANE_PIN);
-    regbuff[WIND_DIR].asFloat = directions[analog_val / 8];
+    double degrees = (analog_val / 1023.0) * 360.0;
+    int index = static_cast<int>((degrees + 22.5)) % 360 / 45;
+    regbuff[WIND_DIR].asFloat = directions[index];
     uint8_t hours = getArg(ARG_SHIFT_RAIN);
     regbuff[RAIN_HOUR].asFloat = rainOverLastHours(hours);
     setStatus(STAT_SHIFT_WIND, READY);
@@ -66,7 +70,6 @@ void handleWindAverage(){
   unsigned long now = millis();
 
   if (now - last_wind_update >= MINUTE) {
-    // save the last time you blinked the LED
     last_wind_update = now;
     roll_arr[roll_pointer] = analogRead(ANEMOMETER_PIN);
     roll_pointer = (roll_pointer + 1) % ROLL_WINDOW ;
@@ -84,10 +87,9 @@ void handleWindAverage(){
 *******/
 void handleRain(){
   if (rain_flag==true){
-    blink(2,50);
     tipCounter++;
     hourlyTipCounter++;
-    float rain_increment = regbuff[RAIN_INCR].asFloat;  // Use the current register value
+    float rain_increment = regbuff[RAIN_INCR].asFloat; 
     float rainfall = tipCounter * rain_increment;
 
     regbuff[RAIN_COUNT].asFloat = rainfall;
@@ -124,8 +126,8 @@ float rainOverLastHours(uint8_t hours) {
 *******/
 void blink(int n, int time){
   for (int i = 0; i < n; i++){
-  digitalWrite(LED_PIN, HIGH); // sets the digital pin 13 on
-  delay(time);            // waits for a second
+  digitalWrite(LED_PIN, HIGH); 
+  delay(time); 
   digitalWrite(LED_PIN, LOW);
   delay(time);
   }
