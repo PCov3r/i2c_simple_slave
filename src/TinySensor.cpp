@@ -17,6 +17,7 @@ float TinySensor::read(uint8_t reg) {
   Wire.beginTransmission(_address);
   Wire.write(reg);
   delayMicroseconds(20);
+  Wire.endTransmission();
 
   // Read 4 bytes value from register
   Wire.requestFrom(_address, NUM_BYTES);
