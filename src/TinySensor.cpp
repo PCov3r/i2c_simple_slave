@@ -1,10 +1,9 @@
 #include "TinySensor.h"
 
-TinySensor::TinySensor(uint8_t address) {
-  _address = address;
-}
+TinySensor::TinySensor() {}
 
-bool TinySensor::begin() {
+bool TinySensor::begin(uint8_t address) {
+  _address = address;
   Wire.begin();
   Wire.beginTransmission(_address);
   uint8_t error = Wire.endTransmission();

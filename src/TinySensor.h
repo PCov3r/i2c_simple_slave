@@ -25,8 +25,8 @@ const byte WIND_DIR         = 0x09; // Wind direction
 
 class TinySensor {
 public:
-  TinySensor(uint8_t address=0x08);
-  bool begin();
+  TinySensor();
+  bool begin(uint8_t address=0x08);
   float getInstantRain();
   float getAverageWind();
   bool requestInstantWind();
